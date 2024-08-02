@@ -1,5 +1,5 @@
-const { validate , parseJson ,checkUniqueData ,hashed , findOrFail}  = require('./../helpers/utilities');
-const file = require('./../lib/data');
+const { validate , parseJson ,checkUniqueData ,hashed , findOrFail}  = require('../helpers/utilities');
+const file = require('../lib/data');
 
 
 class UserController{
@@ -7,15 +7,14 @@ class UserController{
 
     }
 
-   static index(requestProperties , callback){
+   static async index(requestProperties , callback){
 
-    file.read('users','user',(err,data)=>{
-        if(!err){
-            callback(200,parseJson(data));
-        }else{
-            callback(200,{})
+        try{
+            let users =  await file.read('users','user');
+        return callback(200,users);
+        }catch(err){
+            return callback(200,{message : 'Users not found'});
         }
-    })
        
     }
 
@@ -120,6 +119,7 @@ class UserController{
             'phone' : ['required' , 'number'],
             'email' : ['required' , 'email'],
             'username' : ['required'],
+            'password' : ['required']
         }
 
         let validated = validate(reqData ,validateRule );

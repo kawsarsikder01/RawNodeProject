@@ -1,20 +1,35 @@
-const UserController  = require('./routeHandelers/userHandeler')
+const UserController  = require('./Handeler/userHandeler');
+const AuthHandeler = require('./Handeler/AuthHandeler');
+const Auth = require('./Middleware/Auth');
 
 const routes = {
-    'users' : {
-        'GET' : UserController.index,
+    
+    'login' : {
+        'POST' : AuthHandeler.login
     },
-    'user/store' : {
-        'POST' : UserController.store
-    },
-    'user/show' :{
-        'GET' : UserController.show
-    },
-    'user/update' :{
-        'PUT' : UserController.update
-    },
-    'user/delete' :{
-        'DELETE' : UserController.delete
+    
+    'middleware' : {
+        'users' : {
+            'GET' : UserController.index,
+            'middlewares' : [Auth]
+        },
+
+        'user/store' : {
+            'POST' : UserController.store,
+            'middlewares' : [Auth]
+        },
+        'user/show' :{
+            'GET' : UserController.show,
+            'middlewares' : [Auth]
+        },
+        'user/update' :{
+            'PUT' : UserController.update,
+            'middlewares' : [Auth]
+        },
+        'user/delete' :{
+            'DELETE' : UserController.delete,
+            'middlewares' : [Auth]
+        },
     }
 }
 

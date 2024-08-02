@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 
 const environment= require('./environment');
+const file = require('./../lib/data')
 
 
 const utilites = {};
@@ -107,5 +108,54 @@ utilites.findData = (datas , field , value)=>{
         }
     }
 }
+
+utilites.authenticate = (users, username , password)=>{
+    let hashedPassword = utilites.hashed(password);
+    let user = utilites.findData(users,'username',username);
+    if(user){
+        if(user.password === hashedPassword){
+            return user;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+}
+
+utilites.createToken = (length = 20) => {
+    let possibleCharacters = 'ABCDEFGHIJKMNLOPQRSTUVWXYZabcdefghijkmnlopqrstuvwxyz0123456789';
+    if (typeof length === 'number' && length > 0) {
+        let output = '';
+        for (let i = 0; i < length; i++) {
+            output += possibleCharacters.charAt(Math.floor(Math.random() * possibleCharacters.length));
+        }
+        return output;
+    } else {
+        let output = '';
+        for (let i = 0; i < 20; i++) {
+            output += possibleCharacters.charAt(Math.floor(Math.random() * possibleCharacters.length));
+        }
+        return output;
+    }
+}
+
+utilites.checkToken = async (userToken)=>{
+
+    try{
+        let tokens = await file.read('token','tokens');
+        
+        for (let key in tokens) {
+            if (tokens[key] === userToken) {
+                return true;
+            }
+        }
+        return false;
+        
+    }catch(err){
+        return false;
+    }
+}
+ 
 
 module.exports = utilites;
